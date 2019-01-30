@@ -1,0 +1,27 @@
+@import "definitions";
+
+.team-red {
+    color: $teamRed;
+}
+
+.team-black {
+    color: $teamBlack;
+}
+
+body {
+    font-family: $mainFont;
+}
+
+h1.title {
+    font-weight: 300;
+    font-size: 2.5vw;
+    margin: 0;
+}
+h2.title {
+    font-weight: 700;
+    font-size: 2vw;
+    margin: 0;
+}
+
+@import "./components/header.scss";
+@import "./components/motion-profiler-page.scss";
