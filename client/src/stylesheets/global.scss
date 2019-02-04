@@ -23,5 +23,7 @@ h2.title {
     margin: 0;
 }
 
+@import "./components/page.scss";
+
 @import "./components/header.scss";
 @import "./components/motion-profiler-page.scss";

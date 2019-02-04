@@ -10,7 +10,7 @@ class MotionProfiler extends React.Component {
             { x: 1600, y: 0 }
         ];
         return (
-            <div className="motion-profiler-page">
+            <div className="motion-profiler-page page">
                 <h1 className="title">Motion Profiler</h1>
                 <div className="side-panel">
                     <h2 className="title">Saved</h2>
