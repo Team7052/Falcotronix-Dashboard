@@ -14,22 +14,10 @@ public class APIController {
 
     @RequestMapping("/motors")
     public ArrayList<String> motor() {
-        NetworkTableInstance instance = NetworkTableInstance.getDefault();
-        NetworkTable table = instance.getTable("motorData");
+        NetworkTable table = Application.instance.getTable("motorData");
         Set<String> keys = table.getKeys();
-        ArrayList<String> motorNames = new ArrayList<>();
-        for (String key: keys) {
-            NetworkTableEntry entry = table.getEntry(key);
-            NetworkTableValue value = entry.getValue();
-            if (value.getType() == NetworkTableType.kString) {
-                motorNames.add(value.getString());
-            }
-        }
-        ArrayList<String> fakeNames = new ArrayList<>();
-
-        fakeNames.add("frontLeftMotor");
-        fakeNames.add("frontRightMotor");
-        return fakeNames;
-        //return motorNames;
+        System.out.println(keys);
+        ArrayList<String> motorNames = new ArrayList<>(keys);
+        return motorNames;
     }
 }

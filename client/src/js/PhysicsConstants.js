@@ -15,7 +15,7 @@ export const jointSize = 2.5;
 export const ground = 5;
 export const ratio = 5;
 
-export const rocketHeight = 
+export const rocketHeight = 72;
 
 export default {
     baseHeight, baseWidth, baseOffset, wheelSize, wheelSpacing,
