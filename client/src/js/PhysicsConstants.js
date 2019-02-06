@@ -13,7 +13,7 @@ export const backToArm = 17.665;
 export const jointSize = 2.5;
 
 export const ground = 5;
-export const ratio = 6;
+export const ratio = 5;
 
 export default {
     baseHeight, baseWidth, baseOffset, wheelSize, wheelSpacing,

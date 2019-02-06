@@ -48,9 +48,9 @@ class PhysicsWorld {
     _interpolate = (currentPos, newPos) => {
         let delta_h = newPos.h - currentPos.h;
         let delta_l = newPos.l - currentPos.l;
-        let points = [{l: currentPos.l, h: currentPos.h}];
+        let points = [];
         let numberOfLines = 20;
-        for (let i = 1; i < numberOfLines; i++) {
+        for (let i = 0; i <= numberOfLines; i++) {
             let h = currentPos.h + delta_h * (i / numberOfLines);
             let l = currentPos.l + delta_l * (i / numberOfLines);
             points.push({l: l, h: h});

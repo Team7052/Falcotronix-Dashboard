@@ -2,7 +2,7 @@ import React from "react";
 import { LineChart, Line, XAxis, YAxis, Label, Tooltip } from "recharts";
 import PhysicsWorld from "../js/PhysicsWorld";
 import GraphicsEngine from "../js/GraphicsEngine";
-import { ratio, ground, baseOffset } from "../js/PhysicsConstants";
+import { ratio, ground, baseOffset, hand } from "../js/PhysicsConstants";
 
 class KinematicsGenerator extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class KinematicsGenerator extends React.Component {
         return (
             <div className="kinematics-page page">
                 <h1 className="title">Kinematics</h1>
-                <canvas className="canvas" ref={this.canvasRef} width={800} height={600} onClick={(e) => this.handleClick(e)}></canvas>
+                <canvas className="canvas" ref={this.canvasRef} width={window.innerWidth / 2} height={600} onClick={(e) => this.handleClick(e)}></canvas>
                 {/*<div className="graph-visualizer">
                     <LineChart width={800} height={400} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 20 }}>
                         <XAxis type="number" dataKey="x">
@@ -68,13 +68,13 @@ class KinematicsGenerator extends React.Component {
         let canvasX = e.pageX - this.canvasRef.current.offsetLeft;
         let canvasY = e.pageY - this.canvasRef.current.offsetTop;
         let physicsCoord = this.pixelToPhysics({x: canvasX, y: canvasY});
-        
+        console.log(physicsCoord.x + "in, " + physicsCoord.y + "in");
         this.setState({
             targetPhysicsCoord: {
                 x: physicsCoord.x,
                 y: physicsCoord.y
             }
-        })
+        }, () => this.animate());
     }
     pixelToPhysics = (coordinate) => {
         coordinate.y = this.canvasRef.current.height - coordinate.y - ground * ratio;
@@ -88,12 +88,15 @@ class KinematicsGenerator extends React.Component {
     redrawPhysicsWorld = () => {
         let ctx = this.graphicsEngine.renderWorld(this.physicsWorld);
         let loc = this.state.targetPhysicsCoord;
-        if (loc.x != -1000) {
+        if (loc.x !== -1000) {
             ctx.beginPath();
-            ctx.arc((baseOffset + loc.x) * ratio, this.graphicsEngine.convertY(loc.y * ratio), 10, 0 ,360);
+            ctx.arc((baseOffset + loc.x) * ratio - 10, this.graphicsEngine.convertY(loc.y * ratio), 10, 0 ,360);
             ctx.strokeStyle = "#E1864B";
             ctx.lineWeight = 5.0;
             ctx.stroke();
+            ctx.beginPath();
+            ctx.arc((baseOffset + loc.x) * ratio - 10, this.graphicsEngine.convertY(loc.y * ratio), 1, 0 ,360);
+            ctx.fill();
         }
     }
 
