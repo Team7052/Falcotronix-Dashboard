@@ -5,9 +5,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import edu.wpi.first.networktables.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class APIController {
@@ -19,5 +17,10 @@ public class APIController {
         System.out.println(keys);
         ArrayList<String> motorNames = new ArrayList<>(keys);
         return motorNames;
+    }
+
+    @PostMapping("/addMotionProfile")
+    public boolean addMotionProfile(@RequestBody MotionProfileRequestModel requestModel) {
+        
     }
 }
