@@ -27,4 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+	compile files("libs/ntcore-java-4.0.0.jar")
+	compile files("libs/ntcore-jni-4.0.0-all.jar")
+	compile files("libs/wpiutil-java-3.0.0.jar")
 }

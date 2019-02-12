@@ -33,7 +33,7 @@ class KinematicsGenerator extends React.Component {
  
         // Add an event listener for when a message is received from the server
         socket.onmessage = function(message) {
-        console.log('Message received from server: ' + message);
+            console.log(message);
         };
     }
     componentDidUpdate() {

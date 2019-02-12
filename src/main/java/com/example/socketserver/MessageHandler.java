@@ -5,7 +5,15 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
+import java.util.TimerTask;
+
 public class MessageHandler extends TextWebSocketHandler {
+    RobotCommManager commManager;
+    public MessageHandler() {
+        super();
+        commManager = RobotCommManager.getInstance();
+    }
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
@@ -14,10 +22,11 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
+        commManager.addSession(session);
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         System.out.println("Text message received: " + message);
     }
 }
