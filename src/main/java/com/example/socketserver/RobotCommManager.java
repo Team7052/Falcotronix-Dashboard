@@ -34,8 +34,10 @@ public class RobotCommManager implements Runnable {
         timer.scheduleAtFixedRate(this, 0, 100, TimeUnit.MILLISECONDS);
 
         this.robotData = this.initializeHashMap();
+        //this.generateTestData();
         this.initializeNetworkTableConnection();
-
+        String mapToString = this.toJSON(this.robotData);
+        System.out.println(mapToString);
         t.start();
     }
 
@@ -44,44 +46,47 @@ public class RobotCommManager implements Runnable {
 
         // get network table entries
         NetworkTable motorDataTable = networkTableInstance.getTable("motorData");
+        NetworkTable armKinematicsTable = networkTableInstance.getTable("armKinematics");
 
         networkTableInstance.startClientTeam(7052);
         networkTableInstance.startDSClient();
 
         motorDataTable.addEntryListener((table, key, entry, value, flags) -> {
-            String converted = this.convertEntryData(value);
-            Map map = (HashMap<String, Object>) robotData.get("motorData");
-            if (robotData.containsKey(key)) map.replace(key, converted);
-            else map.put(key, converted);
+            this.addEntryToRobotData((Map<String, Object>) robotData.get("motorData"), key, value);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
+        armKinematicsTable.addEntryListener((table, key, entry, value, flags) -> {
+            this.addEntryToRobotData((Map<String, Object>) robotData.get("armKinematics"), key, value);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     }
 
-    private String convertEntryData(NetworkTableValue value) {
-        if (value.getType() == NetworkTableType.kBoolean) return value.getBoolean() ? "true" : "false";
-        else if (value.getType() == NetworkTableType.kBooleanArray) return value.getBooleanArray().toString();
-        else if (value.getType() == NetworkTableType.kDouble) return value.getDouble() + "";
-        else if (value.getType() == NetworkTableType.kDoubleArray) return value.getDoubleArray().toString();
-        else if (value.getType() == NetworkTableType.kString) return value.getString();
-        else if (value.getType() == NetworkTableType.kStringArray) return value.getStringArray().toString();
+    private void addEntryToRobotData(Map<String, Object> map, String key, NetworkTableValue value) {
+        Object obj;
 
-        return value.getRaw().toString();
+        if (value.getType() == NetworkTableType.kBoolean) obj = value.getBoolean() ? true : false;
+        else if (value.getType() == NetworkTableType.kBooleanArray) obj = value.getBooleanArray();
+        else if (value.getType() == NetworkTableType.kDouble) obj = value.getDouble();
+        else if (value.getType() == NetworkTableType.kDoubleArray) obj = value.getDoubleArray();
+        else if (value.getType() == NetworkTableType.kString) obj = value.getString();
+        else if (value.getType() == NetworkTableType.kStringArray) obj = value.getStringArray();
+        else obj = "";
+        if (robotData.containsKey(key)) map.replace(key, obj);
+        else map.put(key, obj);
     }
 
     @Override
     public void run() {
         // generate data to send
+        String mapToString = this.toJSON(this.robotData);
         sessions.forEach(session -> {
             if (!session.isOpen()) {
                 sessions.remove(session);
                 return;
             }
             try {
-                String mapToString = this.robotData.toString();
-                TextMessage message = new TextMessage(mapToString.replace("=", ":"));
+                TextMessage message = new TextMessage(mapToString);
                 session.sendMessage(message);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -92,14 +97,24 @@ public class RobotCommManager implements Runnable {
         // json to string
         HashMap<String, Object> map = new HashMap<>();
 
-        map.put("kinematics", new HashMap<String, Object>());
+        map.put("armKinematics", new HashMap<String, Object>());
         map.put("motorData", new HashMap<String, Object>());
 
         return map;
     }
 
+    private void generateTestData() {
+        double arr[] = {
+                0.1, 0.5, 0.8, 1.0
+        };
+        ((Map<String, Object>) this.robotData.get("motorData")).put("leftMotorSpeed", 0.5);
+        ((Map<String, Object>) this.robotData.get("motorData")).put("leftMotorIsSet", true);
+        ((Map<String, Object>) this.robotData.get("motorData")).put("leftMotorProfile", arr);
+    }
+
     public String toJSON(HashMap<String, Object> map) {
         Iterator it = map.entrySet().iterator();
+        String jsonString = "{";
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             String key = (String) pair.getKey();
@@ -107,20 +122,41 @@ public class RobotCommManager implements Runnable {
             String end = "";
             try {
                 HashMap<String, Object> casted = (HashMap<String, Object>) pair.getValue();
-                end = "{" + this.toJSON(casted) + "}";
+                end = this.toJSON(casted);
             }
             catch (ClassCastException e) {
                 Object value = pair.getValue();
                 String str = this.getString(value);
-                if (str != null) {
-                    end = keyPrefix + "\"" + str + "\"";
-                }
-
-                if (isBoolean(value)) {
-                    end = keyPrefix + (boolean) value;
+                Double valDouble = this.getDouble(value);
+                double[] valDoubleArray = this.getDoubleArray(value);
+                if (str != null) end = "\"" + str + "\"";
+                else if (isBoolean(value)) end = "" + (boolean) value;
+                else if (valDouble != null) end = valDouble + "";
+                else if (valDoubleArray != null) {
+                    Double[] newArr = new Double[valDoubleArray.length];
+                    for (int i = 0, n = newArr.length; i < n; i++) newArr[i] = valDoubleArray[i];
+                    end += arrToString(newArr);
                 }
             }
+            if (it.hasNext()) {
+                end += ",";
+            }
+
+            jsonString += keyPrefix + end;
         }
+        jsonString += "}";
+        return jsonString;
+    }
+
+    private <T> String arrToString(T[] arr) {
+        String arrStr = "[";
+        int length = arr.length;
+        for (int i = 0; i < length; i++) {
+            arrStr += arr[i] + "";
+            if (i < length - 1) arrStr += ",";
+        }
+        arrStr += "]";
+        return arrStr;
     }
 
     private String getString(Object obj) {
@@ -151,11 +187,11 @@ public class RobotCommManager implements Runnable {
         }
     }
 
-    private Integer isInteger(Object value) {
+    private double[] getDoubleArray(Object value) {
         try {
-            return (int) value;
+            return (double[]) value;
         }
-        catch(ClassCastException e) {
+        catch (ClassCastException e) {
             return null;
         }
     }
