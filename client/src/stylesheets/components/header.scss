@@ -44,6 +44,11 @@ header {
             justify-self: start;
             padding: 1vw 3vw;
             color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tools-button:hover {
+            transform: scale(1.1);
         }
     }
     section.middle-section {
@@ -68,11 +73,6 @@ header {
                 font-size: 1.5vw;
                 font-weight: 700;
                 color: #696969;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-            span:hover {
-                color: #333333;
             }
         }
     }

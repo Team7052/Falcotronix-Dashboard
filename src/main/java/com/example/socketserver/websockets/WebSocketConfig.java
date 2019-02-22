@@ -1,5 +1,6 @@
-package com.example.socketserver;
+package com.example.socketserver.websockets;
 
+import com.example.socketserver.util.MessageHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketHandler;

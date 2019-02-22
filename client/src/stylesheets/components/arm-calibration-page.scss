@@ -1,0 +1,30 @@
+.arm-calibration-page {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    align-items: center;
+    margin: 5vw 0 0;
+    .button {
+        background-color: #333333;
+        color: white;
+        border-radius: 5vw;
+        padding: 1vw 2vw;
+        width: 25vw;
+        text-align: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        margin: 0.5vw 0 0;
+        visibility: visible;
+        opacity: 1;
+    }
+    .button.completed {
+        background-color: #59D575;
+    }
+    .button.hidden {
+        visibility: hidden;
+        opacity: 0;
+    }
+    .button:hover {
+        transform: scale(1.1);
+    }
+}

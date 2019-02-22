@@ -9,6 +9,5 @@ public class SocketServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SocketServerApplication.class, args);
 	}
-
 }
 
