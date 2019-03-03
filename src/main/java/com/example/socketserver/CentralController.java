@@ -36,10 +36,10 @@ public class CentralController implements Runnable, CentralControllerRobotSideIn
         // initialize robot data hash map
         this.robotData = new RobotData();
         // generate test data for hash map
-        this.generateTestData();
+        //this.generateTestData();
 
         // comment robotSideHandler if testing
-        //this.robotSideHandler = new RobotSideHandler(this);
+        this.robotSideHandler = new RobotSideHandler(this);
         this.calibrationManager = new CalibrationManager(this, this);
 
         // begin thread and timer
@@ -53,6 +53,7 @@ public class CentralController implements Runnable, CentralControllerRobotSideIn
     public void run() {
         // generate data to send
         String mapToString = JsonConverter.encode(this.robotData.getMap());
+        System.out.println(mapToString);
         this.sendMessage(mapToString);
     }
 

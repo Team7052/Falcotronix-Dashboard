@@ -16,8 +16,6 @@ public class RobotSideHandler {
 
         networkTableInstance = NetworkTableInstance.getDefault();
 
-        networkTableInstance = NetworkTableInstance.getDefault();
-
         // get network table entries
         this.addTableListener(NetworkConstants.kMotorDataTable, 0);
         this.addTableListener(NetworkConstants.kArmKinematicsTable, 0);
